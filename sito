@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buon Compleanno Eli</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+    body {
+      font-family: 'Pacifico', cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff69b4, #ffff00);
+      text-align: center;
+      overflow: hidden;
+      animation: backgroundDance 5s infinite alternate;
+    }
+
+    @keyframes backgroundDance {
+      0% { background: linear-gradient(135deg, #ff69b4, #ffff00); }
+      100% { background: linear-gradient(135deg, #00ffff, #ff00ff); }
+    }
+
+    .gift {
+      font-size: 8rem;
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-15px); }
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin: 1rem 0;
+      color: #ff00ff;
+      text-shadow: 2px 2px #ffffff;
+    }
+
+    button {
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      background-color: #ff88aa;
+      border: 2px solid #fff;
+      border-radius: 12px;
+      cursor: pointer;
+      color: white;
+      margin: 0.5rem;
+      box-shadow: 0 0 10px #ff69b4;
+    }
+
+    .quiz, .final-message {
+      display: none;
+      margin-top: 2rem;
+    }
+
+    .question {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      color: #000080;
+    }
+
+    .final-message h1 {
+      font-size: 3rem;
+      color: #ff0000;
+      text-shadow: 3px 3px #00ffff;
+      animation: blink 1s step-start 0s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="gift">🎁</div>
+  <h1>Buon Compleanno Eli</h1>
+  <button onclick="startQuiz()">Scopri il tuo regalo</button>
+
+  <div class="quiz" id="quiz">
+    <div class="question" id="questionText"></div>
+    <button onclick="nextQuestion(true)">Sì</button>
+    <button onclick="nextQuestion(false)">No</button>
+  </div>
+
+  <div class="final-message" id="finalMessage">
+    <h1>FACCIAMO UN VIAGGIO INSIEME</h1>
+  </div>
+
+  <audio id="partyMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    const questions = [
+      "Ti fidi di me?",
+      "Hai impegni a inizio settembre?",
+      "Potrebbero succedere cose imbarazzanti, accetti comunque?",
+      "Ti piacciono le sorprese?",
+      "Forse passerai del tempo anche con altre persone (imbarazzanti anche loro, ma gli vogliamo bene), va bene per te?",
+      "Sei pronta a fare le valigie?"
+    ];
+
+    let currentQuestion = 0;
+
+    function startQuiz() {
+      document.querySelector('button').style.display = 'none';
+      document.getElementById('quiz').style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      document.getElementById('questionText').textContent = questions[currentQuestion];
+    }
+
+    function nextQuestion(answer) {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('finalMessage').style.display = 'block';
+        startFinalEffects();
+      }
+    }
+
+    function startFinalEffects() {
+      confetti({
+        particleCount: 300,
+        spread: 120,
+        origin: { y: 0.6 }
+      });
+      document.getElementById('partyMusic').play();
+    }
+  </script>
+</body>
+</html>
