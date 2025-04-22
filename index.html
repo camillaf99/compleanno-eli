@@ -6,42 +6,46 @@
   <title>Buon Compleanno Eli</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-
     body {
       font-family: 'Pacifico', cursive;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh; /* Cambiato da height a min-height */
       background: linear-gradient(135deg, #ff69b4, #ffff00);
       text-align: center;
-      overflow: hidden;
+      overflow-x: hidden; /* Consenti lo scorrimento verticale ma blocca quello orizzontale */
+      padding: 20px; /* Aggiungi padding per evitare che il contenuto sia troppo vicino ai bordi */
+      margin: 0; /* Rimuovi il margine predefinito */
       animation: backgroundDance 5s infinite alternate;
+      box-sizing: border-box; /* Per includere padding nel calcolo dell'altezza */
     }
-
     @keyframes backgroundDance {
       0% { background: linear-gradient(135deg, #ff69b4, #ffff00); }
       100% { background: linear-gradient(135deg, #00ffff, #ff00ff); }
     }
-
+    .container {
+      width: 100%;
+      max-width: 600px; /* Limita la larghezza massima su schermi grandi */
+      padding: 20px;
+      box-sizing: border-box;
+    }
     .gift {
       font-size: 8rem;
       animation: bounce 1s infinite alternate;
+      margin-top: 20px; /* Aggiungi spazio sopra il regalo */
     }
-
     @keyframes bounce {
       from { transform: translateY(0); }
       to { transform: translateY(-15px); }
     }
-
     h1 {
       font-size: 3rem;
       margin: 1rem 0;
       color: #ff00ff;
       text-shadow: 2px 2px #ffffff;
     }
-
     button {
       padding: 1rem 2rem;
       font-size: 1.5rem;
@@ -53,47 +57,62 @@
       margin: 0.5rem;
       box-shadow: 0 0 10px #ff69b4;
     }
-
     .quiz, .final-message {
       display: none;
       margin-top: 2rem;
+      width: 100%; /* Assicura che occupi tutta la larghezza disponibile */
     }
-
     .question {
       margin-bottom: 1rem;
       font-size: 1.8rem;
       color: #000080;
+      padding: 0 10px; /* Aggiungi padding per testo lungo */
     }
-
     .final-message h1 {
-      font-size: 3rem;
+      font-size: 2.5rem; /* Ridotto leggermente per dispositivi mobili */
       color: #ff0000;
       text-shadow: 3px 3px #00ffff;
       animation: blink 1s step-start 0s infinite;
     }
-
     @keyframes blink {
       50% { opacity: 0; }
+    }
+    /* Media query per dispositivi mobili più piccoli */
+    @media (max-width: 480px) {
+      .gift {
+        font-size: 6rem; /* Icona regalo più piccola su mobile */
+      }
+      h1 {
+        font-size: 2.2rem; /* Titolo più piccolo su mobile */
+      }
+      .question {
+        font-size: 1.5rem; /* Domande più piccole su mobile */
+      }
+      button {
+        padding: 0.8rem 1.5rem; /* Bottoni più piccoli su mobile */
+        font-size: 1.2rem;
+      }
+      .final-message h1 {
+        font-size: 2rem; /* Messaggio finale più piccolo su mobile */
+      }
     }
   </style>
 </head>
 <body>
-  <div class="gift">🎁</div>
-  <h1>Buon Compleanno Eli</h1>
-  <button onclick="startQuiz()">Scopri il tuo regalo</button>
-
-  <div class="quiz" id="quiz">
-    <div class="question" id="questionText"></div>
-    <button onclick="nextQuestion(true)">Sì</button>
-    <button onclick="nextQuestion(false)">No</button>
+  <div class="container">
+    <div class="gift">🎁</div>
+    <h1>Buon Compleanno Eli</h1>
+    <button onclick="startQuiz()">Scopri il tuo regalo</button>
+    <div class="quiz" id="quiz">
+      <div class="question" id="questionText"></div>
+      <button onclick="nextQuestion(true)">Sì</button>
+      <button onclick="nextQuestion(false)">No</button>
+    </div>
+    <div class="final-message" id="finalMessage">
+      <h1>FACCIAMO UN VIAGGIO INSIEME</h1>
+    </div>
   </div>
-
-  <div class="final-message" id="finalMessage">
-    <h1>FACCIAMO UN VIAGGIO INSIEME</h1>
-  </div>
-
   <audio id="partyMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
     const questions = [
@@ -104,19 +123,15 @@
       "Forse passerai del tempo anche con altre persone (imbarazzanti anche loro, ma gli vogliamo bene), va bene per te?",
       "Sei pronta a fare le valigie?"
     ];
-
     let currentQuestion = 0;
-
     function startQuiz() {
       document.querySelector('button').style.display = 'none';
       document.getElementById('quiz').style.display = 'block';
       showQuestion();
     }
-
     function showQuestion() {
       document.getElementById('questionText').textContent = questions[currentQuestion];
     }
-
     function nextQuestion(answer) {
       currentQuestion++;
       if (currentQuestion < questions.length) {
@@ -125,17 +140,51 @@
         document.getElementById('quiz').style.display = 'none';
         document.getElementById('finalMessage').style.display = 'block';
         startFinalEffects();
+        // Aggiungi lo scorrimento automatico verso il messaggio finale
+        document.getElementById('finalMessage').scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
       }
     }
-
     function startFinalEffects() {
       confetti({
         particleCount: 300,
         spread: 120,
         origin: { y: 0.6 }
       });
-      document.getElementById('partyMusic').play();
+      
+      // Riproduzione della musica con gestione degli errori
+      const audio = document.getElementById('partyMusic');
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          // Auto-play è stato impedito
+          console.log("Riproduzione automatica impedita:", error);
+          // Puoi aggiungere un pulsante per riprodurre manualmente se vuoi
+        });
+      }
     }
+    
+    // Funzione per verificare se la pagina è troppo alta e aggiungere scroll hint se necessario
+    function checkPageHeight() {
+      if (document.body.scrollHeight > window.innerHeight) {
+        // Se vuoi aggiungere un indicatore di scroll (opzionale)
+        const scrollHint = document.createElement('div');
+        scrollHint.innerHTML = '⬇️';
+        scrollHint.style.position = 'fixed';
+        scrollHint.style.bottom = '20px';
+        scrollHint.style.left = '50%';
+        scrollHint.style.transform = 'translateX(-50%)';
+        scrollHint.style.fontSize = '2rem';
+        scrollHint.style.animation = 'bounce 1s infinite alternate';
+        document.body.appendChild(scrollHint);
+      }
+    }
+    
+    // Controlla l'altezza quando la pagina viene caricata
+    window.addEventListener('load', checkPageHeight);
   </script>
 </body>
 </html>
